@@ -40,10 +40,31 @@ class ClientHandler(threading.Thread):
         self.client_socket.close()
     
     def handle_request(self, request):
+        parts = request.split()
         
-        #for parsing value
+        if not parts:
+            return "Invalid command"
         
-        pass
+        command = parts[0].upper()
+        
+        if command == "GET":
+            #check if the key exists in the data directory
+            key = parts[1]
+            if key in self.data:
+                return self.data[key]
+            else:
+                return "(nil)" # key not found
+            
+        elif command == "SET":
+            #set a key-value pair in the data dictionary
+            key = parts[1]
+            value = parts[2]
+            self.data[key] = value
+            return "OK"
+        
+        else:
+            return "Unknown command"
+        
     
 if __name__ == "__main__":
     server = RedisServer("127.0.0.1", 6379)
